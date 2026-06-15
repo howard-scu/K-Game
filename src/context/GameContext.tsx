@@ -6,7 +6,7 @@ const initialState: GameState = {
   stock: { symbol: '', name: '', candles: [], backgroundCandles: [] },
   benchmark: [],
   settings: { candleCount: 30 },
-  currentIndex: -1,
+  currentIndex: 0,
   cash: 100000,
   positions: [],
   history: [],

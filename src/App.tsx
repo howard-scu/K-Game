@@ -15,7 +15,9 @@ function Router() {
 export default function App() {
   return (
     <GameProvider>
-      <Router />
+      <div className="scanlines">
+        <Router />
+      </div>
     </GameProvider>
   );
 }

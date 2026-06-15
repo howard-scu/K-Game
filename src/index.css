@@ -1,4 +1,184 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-body { @apply bg-gray-950 text-gray-100 font-sans antialiased; }
+
+:root {
+  --bg-primary: #0b0d17;
+  --bg-secondary: #111322;
+  --bg-card: #151729;
+  --border-color: #1f2235;
+  --border-light: #2a2e45;
+  --accent-amber: #f59e0b;
+  --accent-rose: #e11d48;
+  --accent-teal: #14b8a6;
+  --text-primary: #eef0f6;
+  --text-secondary: #8b8fa3;
+  --text-muted: #5a5e72;
+  --chart-up: #0077BB;
+  --chart-down: #EE7733;
+}
+
+html {
+  font-family: 'Noto Sans SC', sans-serif;
+}
+
+body {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+}
+
+.number {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* Range slider */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  background: var(--border-color);
+  border-radius: 2px;
+  outline: none;
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+  cursor: pointer;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.3);
+  transition: box-shadow 0.2s;
+}
+input[type='range']::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.5);
+}
+
+/* Grid background pattern */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(31, 34, 53, 0.4) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(31, 34, 53, 0.4) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* Scanline overlay */
+.scanlines::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Glow effects */
+.glow-amber {
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15), 0 0 40px rgba(245, 158, 11, 0.05);
+}
+.glow-rose {
+  box-shadow: 0 0 20px rgba(225, 29, 72, 0.15), 0 0 40px rgba(225, 29, 72, 0.05);
+}
+
+/* Glass card */
+.glass-card {
+  background: rgba(21, 23, 41, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+/* Animated pulse dot */
+.pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-amber);
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+
+/* Slide-up animation */
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Grade glow */
+.grade-glow-S { text-shadow: 0 0 40px rgba(245, 158, 11, 0.4), 0 0 80px rgba(245, 158, 11, 0.15); }
+.grade-glow-A { text-shadow: 0 0 30px rgba(20, 184, 166, 0.3); }
+.grade-glow-B { text-shadow: 0 0 20px rgba(59, 130, 246, 0.25); }
+.grade-glow-C { text-shadow: 0 0 20px rgba(251, 146, 60, 0.25); }
+.grade-glow-D { text-shadow: 0 0 20px rgba(239, 68, 68, 0.25); }
+
+/* Ticker scroll */
+@keyframes ticker-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.ticker-animate {
+  animation: ticker-scroll 30s linear infinite;
+}
+.ticker-animate:hover {
+  animation-play-state: paused;
+}
+
+/* Progress bar */
+.progress-bar {
+  height: 3px;
+  background: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-bar-fill {
+  height: 100%;
+  background: var(--accent-amber);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* Stat reveal */
+.stat-reveal {
+  opacity: 0;
+  animation: stat-reveal 0.5s ease-out forwards;
+}
+@keyframes stat-reveal {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}

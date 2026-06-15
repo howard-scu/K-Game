@@ -3,7 +3,7 @@ import { parseCSV, pickGameSegment } from '../lib/parser';
 import { KLine, GameSettings } from '../lib/types';
 import { stockList, StockMeta } from '../data/index';
 
-const BG_COUNT = 100;
+const BG_COUNT = 120;
 
 interface LoadedData {
   stock: { symbol: string; name: string; candles: KLine[]; backgroundCandles: KLine[] };

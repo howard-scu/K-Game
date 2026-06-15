@@ -82,5 +82,15 @@ export function computeIndicators(candles: KLine[]): IndicatorValues {
     atr.push({ time: candles[i].date, atr: prevAtr });
   }
 
-  return { ma5, ma20, ma60, macd, kdj, atr };
+  const obv: number[] = [];
+  for (let i = 0; i < candles.length; i++) {
+    if (i === 0) { obv.push(candles[i].volume); continue; }
+    const delta = candles[i].close > candles[i - 1].close ? candles[i].volume
+      : candles[i].close < candles[i - 1].close ? -candles[i].volume : 0;
+    obv.push(obv[i - 1] + delta);
+  }
+
+  const obvMa12 = sma(obv, 12);
+
+  return { ma5, ma20, ma60, obv, obvMa12, macd, kdj, atr };
 }

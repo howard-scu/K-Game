@@ -75,6 +75,8 @@ export interface IndicatorValues {
   ma5: (number | null)[];
   ma20: (number | null)[];
   ma60: (number | null)[];
+  obv: number[];
+  obvMa12: (number | null)[];
   macd: MACDData[];
   kdj: KDJData[];
   atr: ATRData[];
