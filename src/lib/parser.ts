@@ -14,6 +14,7 @@ function toNum(v: string): number {
 }
 
 export function parseCSV(content: string): KLine[] {
+  if (content.charCodeAt(0) === 0xFEFF) content = content.slice(1);
   const lines = content.trim().split('\n');
   const format = detectFormat(lines[0]);
   const result: KLine[] = [];

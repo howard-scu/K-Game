@@ -45,6 +45,13 @@ describe('parseCSV', () => {
       volume: 36463709,
     });
   });
+
+  it('strips UTF-8 BOM from CSV content', () => {
+    const bom = '\uFEFF';
+    const result = parseCSV(bom + ETF_CSV);
+    expect(result).toHaveLength(2);
+    expect(result[0].open).toBe(0.443);
+  });
 });
 
 describe('parseCSV error handling', () => {
