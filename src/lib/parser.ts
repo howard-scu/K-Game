@@ -7,6 +7,12 @@ export function detectFormat(header: string): 'etf' | 'stock' {
   throw new Error(`Unknown CSV format: ${header}`);
 }
 
+function toNum(v: string): number {
+  const n = parseFloat(v);
+  if (isNaN(n)) throw new Error(`Invalid numeric value: "${v}"`);
+  return n;
+}
+
 export function parseCSV(content: string): KLine[] {
   const lines = content.trim().split('\n');
   const format = detectFormat(lines[0]);
@@ -19,20 +25,20 @@ export function parseCSV(content: string): KLine[] {
     if (format === 'etf') {
       result.push({
         date: cols[0],
-        open: parseFloat(cols[1]),
-        close: parseFloat(cols[2]),
-        high: parseFloat(cols[3]),
-        low: parseFloat(cols[4]),
-        volume: parseFloat(cols[5]),
+        open: toNum(cols[1]),
+        close: toNum(cols[2]),
+        high: toNum(cols[3]),
+        low: toNum(cols[4]),
+        volume: toNum(cols[5]),
       });
     } else {
       result.push({
         date: cols[1],
-        open: parseFloat(cols[2]),
-        high: parseFloat(cols[3]),
-        low: parseFloat(cols[4]),
-        close: parseFloat(cols[5]),
-        volume: parseFloat(cols[6]),
+        open: toNum(cols[2]),
+        high: toNum(cols[3]),
+        low: toNum(cols[4]),
+        close: toNum(cols[5]),
+        volume: toNum(cols[6]),
       });
     }
   }

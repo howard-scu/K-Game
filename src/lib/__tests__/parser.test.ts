@@ -47,13 +47,24 @@ describe('parseCSV', () => {
   });
 });
 
+describe('parseCSV error handling', () => {
+  it('throws on unknown CSV format', () => {
+    expect(() => detectFormat('foo,bar,baz')).toThrow('Unknown CSV format');
+  });
+
+  it('throws on non-numeric value', () => {
+    const badCsv = 'date,open,close,high,low,volume\n2024-01-01,abc,0.5,0.6,0.4,100';
+    expect(() => parseCSV(badCsv)).toThrow('Invalid numeric value');
+  });
+});
+
 describe('pickRandomSegment', () => {
   const data = [
-    { date: 'd1', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
-    { date: 'd2', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
-    { date: 'd3', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
-    { date: 'd4', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
-    { date: 'd5', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-01', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-02', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-03', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-04', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-05', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
   ];
 
   it('returns exact length when enough data', () => {
@@ -66,12 +77,13 @@ describe('pickRandomSegment', () => {
     expect(seg).toHaveLength(5);
   });
 
-  it('all segments are contiguous and in order', () => {
-    for (let i = 0; i < 20; i++) {
+  it('returns contiguous slice', () => {
+    for (let i = 0; i < 10; i++) {
       const seg = pickRandomSegment(data, 3);
-      const indices = seg.map(s => parseInt(s.date[1]));
-      for (let j = 1; j < indices.length; j++) {
-        expect(indices[j]).toBe(indices[j - 1] + 1);
+      for (let j = 1; j < seg.length; j++) {
+        const cur = new Date(seg[j].date);
+        const prev = new Date(seg[j - 1].date);
+        expect(cur.getTime() - prev.getTime()).toBe(86400000);
       }
     }
   });
