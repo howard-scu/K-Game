@@ -42,4 +42,25 @@ describe('computeIndicators', () => {
     const ind = computeIndicators(candles);
     expect(ind.atr[0].atr).toBeGreaterThan(0);
   });
+
+  it('constant price yields MA = price, MACD ~ 0, KDJ = 50 after warmup', () => {
+    const candles = Array.from({ length: 60 }, (_, i) => makeCandle(i, 50));
+    const ind = computeIndicators(candles);
+    for (let i = 4; i < 60; i++) expect(ind.ma5[i]).toBeCloseTo(50, 10);
+    for (let i = 19; i < 60; i++) expect(ind.ma20[i]).toBeCloseTo(50, 10);
+    for (let i = 8; i < 60; i++) {
+      expect(ind.macd[i].macd).toBeCloseTo(0, 5);
+      expect(ind.kdj[i].k).toBeCloseTo(50, 5);
+      expect(ind.kdj[i].d).toBeCloseTo(50, 5);
+    }
+    for (let i = 1; i < 60; i++) {
+      expect(ind.atr[i].atr).toBeCloseTo(2, 3);
+    }
+  });
+
+  it('handles empty candles', () => {
+    const ind = computeIndicators([]);
+    expect(ind.ma5).toEqual([]);
+    expect(ind.macd).toEqual([]);
+  });
 });
