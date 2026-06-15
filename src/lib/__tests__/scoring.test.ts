@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { calcScore } from '../scoring';
-import { TradeAction, Position, KLine } from '../types';
+import { TradeAction, KLine } from '../types';
 
 const candles: KLine[] = Array.from({ length: 30 }, (_, i) => ({
   date: `2024-01-${String(i + 1).padStart(2, '0')}`,
