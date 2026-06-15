@@ -54,80 +54,91 @@ export default function ControlPanel() {
         </div>
       </div>
 
-      <div className="bg-gray-800 rounded p-2 text-center text-sm text-gray-300">
-        第 {state.currentIndex + 1} / {state.settings.candleCount} 根
-      </div>
-
-      {totalShares > 0 && (
-        <div className="bg-gray-800 rounded p-3 space-y-1">
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">持仓</span>
-            <span>{totalShares} 股</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">成本价</span>
-            <span>¥{avgCost.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">市值</span>
-            <span>¥{marketValue.toFixed(2)}</span>
-          </div>
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-400">盈亏</span>
-            <span className={profitPct >= 0 ? 'text-red-400' : 'text-green-400'}>
-              {profitPct >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
-            </span>
-          </div>
-        </div>
-      )}
-
-      <div className="text-xs text-gray-500 text-center">
-        当前价: ¥{currentPrice.toFixed(2)}
-      </div>
-
-      <div>
-        <div className="text-xs text-gray-400 mb-1">仓位比例</div>
-        <div className="grid grid-cols-4 gap-2">
-          {FRACTIONS.map(f => (
-            <button
-              key={f.value}
-              onClick={() => setFraction(f.value)}
-              className={`py-2 rounded text-sm font-medium transition-colors ${
-                fraction === f.value
-                  ? 'bg-rose-600 text-white'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-              }`}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="space-y-2">
+      {state.currentIndex === -1 ? (
         <button
-          onClick={handleBuy}
-          disabled={state.cash <= 0}
-          className="w-full py-3 rounded bg-red-500 hover:bg-red-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold transition-colors"
+          onClick={handleHold}
+          className="w-full py-4 rounded bg-rose-600 hover:bg-rose-700 text-white font-bold text-lg transition-colors mt-4"
         >
-          买入
+          揭示第一根K线
         </button>
-        <div className="grid grid-cols-2 gap-2">
-          <button
-            onClick={handleSell}
-            disabled={totalShares <= 0}
-            className="py-3 rounded bg-green-500 hover:bg-green-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold transition-colors"
-          >
-            卖出
-          </button>
-          <button
-            onClick={handleHold}
-            className="py-3 rounded bg-gray-700 hover:bg-gray-600 text-white font-bold transition-colors"
-          >
-            观望→
-          </button>
-        </div>
-      </div>
+      ) : (
+        <>
+          <div className="bg-gray-800 rounded p-2 text-center text-sm text-gray-300">
+            第 {state.currentIndex + 1} / {state.settings.candleCount} 根
+          </div>
+
+          {totalShares > 0 && (
+            <div className="bg-gray-800 rounded p-3 space-y-1">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">持仓</span>
+                <span>{totalShares} 股</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">成本价</span>
+                <span>¥{avgCost.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">市值</span>
+                <span>¥{marketValue.toFixed(2)}</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-400">盈亏</span>
+                <span className={profitPct >= 0 ? 'text-red-400' : 'text-green-400'}>
+                  {profitPct >= 0 ? '+' : ''}{profitPct.toFixed(2)}%
+                </span>
+              </div>
+            </div>
+          )}
+
+          <div className="text-xs text-gray-500 text-center">
+            当前价: ¥{currentPrice.toFixed(2)}
+          </div>
+
+          <div>
+            <div className="text-xs text-gray-400 mb-1">仓位比例</div>
+            <div className="grid grid-cols-4 gap-2">
+              {FRACTIONS.map(f => (
+                <button
+                  key={f.value}
+                  onClick={() => setFraction(f.value)}
+                  className={`py-2 rounded text-sm font-medium transition-colors ${
+                    fraction === f.value
+                      ? 'bg-rose-600 text-white'
+                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  }`}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <button
+              onClick={handleBuy}
+              disabled={state.cash <= 0}
+              className="w-full py-3 rounded bg-red-500 hover:bg-red-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold transition-colors"
+            >
+              买入
+            </button>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={handleSell}
+                disabled={totalShares <= 0}
+                className="py-3 rounded bg-green-500 hover:bg-green-600 disabled:bg-gray-700 disabled:text-gray-500 text-white font-bold transition-colors"
+              >
+                卖出
+              </button>
+              <button
+                onClick={handleHold}
+                className="py-3 rounded bg-gray-700 hover:bg-gray-600 text-white font-bold transition-colors"
+              >
+                观望→
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

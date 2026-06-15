@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { detectFormat, parseCSV, pickRandomSegment } from '../parser';
+import { detectFormat, parseCSV, pickRandomSegment, pickGameSegment } from '../parser';
 
 const ETF_CSV = `date,open,close,high,low,volume,amount
 2019-01-02,0.443,0.425,0.445,0.425,225,67812.0
@@ -93,5 +93,40 @@ describe('pickRandomSegment', () => {
         expect(cur.getTime() - prev.getTime()).toBe(86400000);
       }
     }
+  });
+});
+
+describe('pickGameSegment', () => {
+  const data = [
+    { date: '2024-01-01', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-02', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-03', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-04', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-05', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-06', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-07', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+    { date: '2024-01-08', open: 1, high: 2, low: 0, close: 1.5, volume: 100 },
+  ];
+
+  it('returns background + game segments totaling correct lengths', () => {
+    const { background, game } = pickGameSegment(data, 3, 4);
+    expect(background).toHaveLength(4);
+    expect(game).toHaveLength(3);
+  });
+
+  it('background immediately precedes game segment', () => {
+    const { background, game } = pickGameSegment(data, 3, 4);
+    if (background.length > 0 && game.length > 0) {
+      const bgEnd = new Date(background[background.length - 1].date);
+      const gameStart = new Date(game[0].date);
+      expect(gameStart.getTime() - bgEnd.getTime()).toBe(86400000);
+    }
+  });
+
+  it('handles insufficient data by returning what is available', () => {
+    const shortData = data.slice(0, 5);
+    const { background, game } = pickGameSegment(shortData, 3, 10);
+    expect(game).toHaveLength(3);
+    expect(background.length).toBeLessThanOrEqual(2);
   });
 });

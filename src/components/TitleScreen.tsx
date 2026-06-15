@@ -6,12 +6,9 @@ export default function TitleScreen() {
   const { dispatch } = useGameState();
   const { stockList, loadStock, loading } = useStockData();
   const [candleCount, setCandleCount] = useState(30);
-  const [selectedSymbol, setSelectedSymbol] = useState(stockList[0]?.symbol ?? '');
-
-  const meta = stockList.find(s => s.symbol === selectedSymbol);
 
   const handleStart = async () => {
-    if (!meta) return;
+    const meta = stockList[Math.floor(Math.random() * stockList.length)];
     const data = await loadStock(meta, { candleCount });
     if (data) {
       dispatch({ type: 'START_GAME', stock: data.stock, benchmark: data.benchmark, settings: { candleCount } });
@@ -25,19 +22,6 @@ export default function TitleScreen() {
         <p className="text-gray-400 text-center mb-8 text-sm">K线盘感训练 · 模拟交易</p>
 
         <div className="space-y-6">
-          <div>
-            <label className="text-sm text-gray-400 block mb-2">选择股票</label>
-            <select
-              value={selectedSymbol}
-              onChange={e => setSelectedSymbol(e.target.value)}
-              className="w-full bg-gray-800 border border-gray-700 rounded p-3 text-white"
-            >
-              {stockList.map(s => (
-                <option key={s.symbol} value={s.symbol}>{s.name} ({s.symbol})</option>
-              ))}
-            </select>
-          </div>
-
           <div>
             <label className="text-sm text-gray-400 block mb-2">
               K线根数: <span className="text-white font-bold">{candleCount}</span>
@@ -57,7 +41,7 @@ export default function TitleScreen() {
 
           <button
             onClick={handleStart}
-            disabled={loading || !meta}
+            disabled={loading}
             className="w-full py-3 bg-rose-600 hover:bg-rose-700 disabled:bg-gray-700 text-white rounded font-bold text-lg transition-colors"
           >
             {loading ? '加载中...' : '开始挑战'}

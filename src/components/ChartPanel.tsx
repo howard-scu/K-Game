@@ -34,12 +34,14 @@ export default function ChartPanel() {
   const chartsRef = useRef<ReturnType<typeof createChart>[]>([]);
   const seriesRef = useRef<Map<string, any>>(new Map());
 
+  const { backgroundCandles, candles } = state.stock;
   const upTo = state.currentIndex;
-  const candles = state.stock.candles;
-  const indicators = useMemo(() => computeIndicators(candles), [candles]);
+  const allCandles = useMemo(() => [...backgroundCandles, ...candles], [backgroundCandles, candles]);
+  const visibleEnd = backgroundCandles.length + upTo;
+  const indicators = useMemo(() => computeIndicators(allCandles), [allCandles]);
 
   useEffect(() => {
-    if (!containerRef.current || candles.length === 0) return;
+    if (!containerRef.current || allCandles.length === 0) return;
 
     chartsRef.current.forEach(c => c.remove());
     chartsRef.current = [];
@@ -68,13 +70,13 @@ export default function ChartPanel() {
     const candleSeries = mainChart.addCandlestickSeries({
       upColor: '#ef4444', downColor: '#22c55e', borderUpColor: '#ef4444', borderDownColor: '#22c55e', wickUpColor: '#ef4444', wickDownColor: '#22c55e',
     });
-    candleSeries.setData(buildCandleData(candles, upTo));
+    candleSeries.setData(buildCandleData(allCandles, visibleEnd));
     seriesRef.current.set('candles', candleSeries);
 
     const maColors = ['#fbbf24', '#a78bfa', '#60a5fa'];
     const maKeys = ['ma5', 'ma20', 'ma60'];
     maKeys.forEach((key, i) => {
-      const data = buildLineData(indicators[key as keyof IndicatorValues] as (number | null)[], candles, upTo);
+      const data = buildLineData(indicators[key as keyof IndicatorValues] as (number | null)[], allCandles, visibleEnd);
       if (data.length > 0) {
         const series = mainChart.addLineSeries({ color: maColors[i], lineWidth: 1 });
         series.setData(data);
@@ -85,7 +87,7 @@ export default function ChartPanel() {
     const volChart = createChart(parent, { ...commonOptions, height: subHeight });
     chartsRef.current.push(volChart);
     const volSeries = volChart.addHistogramSeries({ color: '#60a5fa', priceFormat: { type: 'volume' } });
-    volSeries.setData(candles.slice(0, upTo + 1).map(c => ({
+    volSeries.setData(allCandles.slice(0, visibleEnd + 1).map(c => ({
       time: toUTC(c.date),
       value: c.volume,
       color: c.close >= c.open ? '#ef444480' : '#22c55e80',
@@ -94,7 +96,7 @@ export default function ChartPanel() {
 
     const macdChart = createChart(parent, { ...commonOptions, height: subHeight });
     chartsRef.current.push(macdChart);
-    const macdData = indicators.macd.slice(0, upTo + 1);
+    const macdData = indicators.macd.slice(0, visibleEnd + 1);
     if (macdData.length > 0) {
       const difSeries = macdChart.addLineSeries({ color: '#60a5fa', lineWidth: 1 });
       difSeries.setData(macdData.map(d => ({ time: toUTC(d.time), value: d.dif })));
@@ -109,7 +111,7 @@ export default function ChartPanel() {
 
     const kdjChart = createChart(parent, { ...commonOptions, height: subHeight });
     chartsRef.current.push(kdjChart);
-    const kdjData = indicators.kdj.slice(0, upTo + 1);
+    const kdjData = indicators.kdj.slice(0, visibleEnd + 1);
     if (kdjData.length > 0) {
       const colors = ['#fbbf24', '#a78bfa', '#60a5fa'];
       ['k', 'd', 'j'].forEach((key, i) => {
@@ -120,7 +122,7 @@ export default function ChartPanel() {
 
     const atrChart = createChart(parent, { ...commonOptions, height: subHeight });
     chartsRef.current.push(atrChart);
-    const atrData = indicators.atr.slice(0, upTo + 1);
+    const atrData = indicators.atr.slice(0, visibleEnd + 1);
     if (atrData.length > 0) {
       const atrSeries = atrChart.addLineSeries({ color: '#f59e0b', lineWidth: 1 });
       atrSeries.setData(atrData.map(d => ({ time: toUTC(d.time), value: d.atr })));
@@ -130,8 +132,10 @@ export default function ChartPanel() {
 
     return () => {
       chartsRef.current.forEach(c => c.remove());
+      chartsRef.current = [];
+      seriesRef.current.clear();
     };
-  }, [candles, upTo, indicators]);
+  }, [allCandles, visibleEnd, indicators]);
 
   return <div ref={containerRef} className="w-full" />;
 }

@@ -1,10 +1,12 @@
 import { useState, useCallback, useRef } from 'react';
-import { parseCSV, pickRandomSegment } from '../lib/parser';
+import { parseCSV, pickGameSegment } from '../lib/parser';
 import { KLine, GameSettings } from '../lib/types';
 import { stockList, StockMeta } from '../data/index';
 
+const BG_COUNT = 100;
+
 interface LoadedData {
-  stock: { symbol: string; name: string; candles: KLine[] };
+  stock: { symbol: string; name: string; candles: KLine[]; backgroundCandles: KLine[] };
   benchmark: KLine[];
 }
 
@@ -34,16 +36,16 @@ export function useStockData() {
       const stockCandles = cache.get(meta.file)!;
       const benchmarkCandles = cache.get(benchmarkFile)!;
 
-      const segment = pickRandomSegment(stockCandles, settings.candleCount);
-      const startDate = segment[0].date;
-      const endDate = segment[segment.length - 1].date;
+      const { background, game } = pickGameSegment(stockCandles, settings.candleCount, BG_COUNT);
+      const startDate = game[0].date;
+      const endDate = game[game.length - 1].date;
       const benchmarkSegment = benchmarkCandles.filter(
         c => c.date >= startDate && c.date <= endDate
       );
 
       setLoading(false);
       return {
-        stock: { symbol: meta.symbol, name: meta.name, candles: segment },
+        stock: { symbol: meta.symbol, name: meta.name, candles: game, backgroundCandles: background },
         benchmark: benchmarkSegment,
       };
     } catch (e) {

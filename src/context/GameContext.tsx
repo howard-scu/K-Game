@@ -3,10 +3,10 @@ import { GameState, GameSettings, TradeAction, KLine, Score } from '../lib/types
 
 const initialState: GameState = {
   phase: 'welcome',
-  stock: { symbol: '', name: '', candles: [] },
+  stock: { symbol: '', name: '', candles: [], backgroundCandles: [] },
   benchmark: [],
   settings: { candleCount: 30 },
-  currentIndex: 0,
+  currentIndex: -1,
   cash: 100000,
   positions: [],
   history: [],

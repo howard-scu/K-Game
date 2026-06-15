@@ -52,3 +52,19 @@ export function pickRandomSegment(candles: KLine[], length: number): KLine[] {
   const start = Math.floor(Math.random() * (candles.length - length));
   return candles.slice(start, start + length);
 }
+
+export function pickGameSegment(candles: KLine[], gameLength: number, bgLength: number): { background: KLine[]; game: KLine[] } {
+  const minData = bgLength + gameLength;
+  if (candles.length <= minData) {
+    const start = Math.floor(Math.random() * Math.max(1, candles.length - gameLength));
+    return {
+      background: candles.slice(Math.max(0, start - bgLength), start),
+      game: candles.slice(start, start + gameLength),
+    };
+  }
+  const start = bgLength + Math.floor(Math.random() * (candles.length - bgLength - gameLength));
+  return {
+    background: candles.slice(start - bgLength, start),
+    game: candles.slice(start, start + gameLength),
+  };
+}

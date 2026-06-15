@@ -31,7 +31,7 @@ export interface GameSettings {
 
 export interface GameState {
   phase: GamePhase;
-  stock: { symbol: string; name: string; candles: KLine[] };
+  stock: { symbol: string; name: string; candles: KLine[]; backgroundCandles: KLine[] };
   benchmark: KLine[];
   settings: GameSettings;
   currentIndex: number;
