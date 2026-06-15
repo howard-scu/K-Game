@@ -14,7 +14,8 @@ export function buy(
   fraction: number,
   index: number,
 ): BuyResult {
-  const shares = Math.floor((cash * fraction) / price);
+  const f = Math.min(fraction, 1);
+  const shares = Math.floor((cash * f) / price);
   const actualUsed = shares * price;
   return {
     shares,

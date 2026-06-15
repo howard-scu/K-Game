@@ -38,10 +38,22 @@ describe('sell', () => {
     expect(result.shares).toBe(1000);
     expect(result.positionsAfter).toHaveLength(0);
   });
+
+  it('removes from FIFO across multiple positions', () => {
+    const positions: Position[] = [
+      { buyPrice: 10, shares: 500 },
+      { buyPrice: 12, shares: 500 },
+    ];
+    const result = sell(50000, positions, 15, 0.6, 0);
+    expect(result.shares).toBe(600);
+    expect(result.positionsAfter).toHaveLength(1);
+    expect(result.positionsAfter[0].buyPrice).toBe(12);
+    expect(result.positionsAfter[0].shares).toBe(400);
+  });
 });
 
 describe('addPosition', () => {
-  it('adds a new position or merges into existing', () => {
+  it('appends a new position', () => {
     const positions: Position[] = [{ buyPrice: 10, shares: 1000 }];
     const result = addPosition(positions, 12, 500);
     expect(result).toHaveLength(2);
