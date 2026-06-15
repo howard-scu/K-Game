@@ -1,7 +1,21 @@
+import { GameProvider, useGameState } from './context/GameContext';
+import TitleScreen from './components/TitleScreen';
+import GameScreen from './components/GameScreen';
+import ResultScreen from './components/ResultScreen';
+
+function Router() {
+  const { state } = useGameState();
+  switch (state.phase) {
+    case 'welcome': return <TitleScreen />;
+    case 'playing': return <GameScreen />;
+    case 'result': return <ResultScreen />;
+  }
+}
+
 export default function App() {
   return (
-    <div className="flex items-center justify-center h-screen">
-      <h1 className="text-2xl">韭菜大冒险</h1>
-    </div>
+    <GameProvider>
+      <Router />
+    </GameProvider>
   );
 }
