@@ -35,13 +35,22 @@ export default function GameScreen() {
           )}
         </div>
       </div>
+      {/* Progress bar */}
+      <div className="h-0.5 shrink-0 bg-card">
+        <div
+          className="h-full bg-accent transition-all duration-500 ease-out"
+          style={{ width: `${((state.currentIndex + 1) / state.settings.candleCount) * 100}%` }}
+        />
+      </div>
 
-      {/* Main area */}
-      <div className="flex flex-1 min-h-0">
-        <div className="flex-1 min-w-0">
+      {/* Chart + Control — 3:1 */}
+      <div className="flex-1 flex flex-col min-h-0">
+        <div className="flex-[3] min-h-0">
           <ChartPanel />
         </div>
-        <ControlPanel />
+        <div className="flex-[1] min-h-0 flex flex-col bg-[#0d0f1a] border-t border-border overflow-y-auto">
+          <ControlPanel />
+        </div>
       </div>
     </div>
   );

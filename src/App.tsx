@@ -1,7 +1,16 @@
+import { useEffect } from 'react';
 import { GameProvider, useGameState } from './context/GameContext';
 import TitleScreen from './components/TitleScreen';
 import GameScreen from './components/GameScreen';
 import ResultScreen from './components/ResultScreen';
+
+function useFullscreen() {
+  useEffect(() => {
+    import('@capacitor/status-bar').then(({ StatusBar }) => {
+      StatusBar.hide();
+    }).catch(() => {});
+  }, []);
+}
 
 function Router() {
   const { state } = useGameState();
@@ -13,6 +22,7 @@ function Router() {
 }
 
 export default function App() {
+  useFullscreen();
   return (
     <GameProvider>
       <div className="scanlines">

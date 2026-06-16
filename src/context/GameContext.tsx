@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { GameState, GameSettings, TradeAction, KLine, Score } from '../lib/types';
+import { removeSharesFromPositions } from '../lib/trading';
 
 const initialState: GameState = {
   phase: 'welcome',
@@ -32,14 +33,15 @@ function gameReducer(state: GameState, action: GameAction): GameState {
         cash: 100000,
       };
     case 'EXECUTE_ACTION': {
-      const last = action.action;
+      const a = action.action;
+      const newPositions = a.type === 'sell'
+        ? removeSharesFromPositions(state.positions, a.shares)
+        : [...state.positions, { buyPrice: a.price, shares: a.shares }];
       return {
         ...state,
-        cash: last.cashAfter,
-        positions: last.sharesAfter === 0
-          ? []
-          : [...state.positions, { buyPrice: last.price, shares: last.shares }].filter(p => p.shares > 0),
-        history: [...state.history, last],
+        cash: a.cashAfter,
+        positions: newPositions.filter(p => p.shares > 0),
+        history: [...state.history, a],
       };
     }
     case 'NEXT_CANDLE': {

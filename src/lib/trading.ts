@@ -79,7 +79,7 @@ export function reducePosition(positions: Position[], index: number, shares: num
   return updated;
 }
 
-function removeSharesFromPositions(positions: Position[], sharesToRemove: number): Position[] {
+export function removeSharesFromPositions(positions: Position[], sharesToRemove: number): Position[] {
   const result: Position[] = [];
   let remaining = sharesToRemove;
   for (const p of positions) {

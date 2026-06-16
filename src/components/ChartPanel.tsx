@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from 'react';
-import { createChart, CrosshairMode, UTCTimestamp, IChartApi, ISeriesApi, LineStyle } from 'lightweight-charts';
+import { createChart, CrosshairMode, UTCTimestamp, IChartApi, ISeriesApi, LineStyle, SeriesMarker } from 'lightweight-charts';
 import { useGameState } from '../hooks/useGameState';
 import { computeIndicators } from '../lib/indicators';
 import { KLine, IndicatorValues, MACDData, KDJData, ATRData } from '../lib/types';
@@ -299,6 +299,24 @@ export default function ChartPanel() {
         seriesRef.current.set(key, series);
       }
     });
+
+    // Trade markers
+    const markers: SeriesMarker<UTCTimestamp>[] = [];
+    for (const a of state.history) {
+      if (a.index < 0 || a.index >= state.settings.candleCount) continue;
+      const candleIdx = 40 + a.index;
+      if (candleIdx >= allCandles.length) continue;
+      markers.push({
+        time: toUTC(allCandles[candleIdx].date),
+        position: a.type === 'buy' ? 'belowBar' as const : 'aboveBar' as const,
+        shape: a.type === 'buy' ? 'arrowUp' as const : 'arrowDown' as const,
+        color: a.type === 'buy' ? '#e11d48' : '#14b8a6',
+        text: a.type === 'buy' ? 'B' : 'S',
+        size: 1.5,
+      });
+    }
+    if (markers.length > 0) candleSeries.setMarkers(markers);
+
     addLabel(mainPane, 'MA');
 
     // --- KDJ (pane index 1) ---
@@ -329,6 +347,9 @@ export default function ChartPanel() {
     let macdRepSeries: ISeriesApi<any> | null = null;
     const macdData = indicators.macd.slice(0, visibleEnd + 1);
     if (macdData.length > 0) {
+      // Zero line
+      macdChart.addLineSeries({ color: '#5a5e73', lineWidth: 1, lineStyle: LineStyle.Dashed, priceLineVisible: false, lastValueVisible: false } as const)
+        .setData(macdData.map(d => ({ time: toUTC(d.time), value: 0 })));
       const difSeries = macdChart.addLineSeries({ color: UP, lineWidth: 1, priceLineVisible: false });
       difSeries.setData(macdData.map(d => ({ time: toUTC(d.time), value: d.dif })));
       macdRepSeries = difSeries;
